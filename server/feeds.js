@@ -20,6 +20,14 @@ module.exports = {
     {
       name: "Western Life Today",
       url: "https://www.westernlifetoday.com/feed/"
+    },
+    {
+      name: "The Horse",
+      url: "https://thehorse.com/feed/"
+    },
+    {
+      name: "Horse Network",
+      url: "https://horsenetwork.com/feed/"
     }
   ],
 };
