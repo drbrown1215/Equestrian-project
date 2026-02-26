@@ -83,7 +83,7 @@ function App() {
             Equestrian News Grid
           </h1>
           <p className="text-sm text-slate-300">
-            Curated show-jumping articles from RSS feeds. Click any card to open
+            Curated Equestrian News articles from RSS feeds. Click any card to open
             the original story.
           </p>
         </header>
