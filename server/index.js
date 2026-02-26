@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const Parser = require("rss-parser");
 
-const { feeds, cacheTtlMs } = require("./feeds");
+const { feedsByTopic, defaultTopic, cacheTtlMs } = require("./feeds");
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 5174;
 
@@ -153,7 +153,10 @@ if (hasClientDist) {
 }
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, feeds: feeds.length });
+  const topics = Object.fromEntries(
+    Object.entries(feedsByTopic).map(([k, list]) => [k, list.length]),
+  );
+  res.json({ ok: true, defaultTopic, topics });
 });
 
 app.get("/api/articles", async (req, res) => {
@@ -161,6 +164,11 @@ app.get("/api/articles", async (req, res) => {
     const q = req.query.q;
     const range = safeString(req.query.range);
     const limit = req.query.limit ? Number(req.query.limit) : 120;
+    const requestedTopic = safeString(req.query.topic);
+    const topic =
+      (requestedTopic && feedsByTopic[requestedTopic] ? requestedTopic : null) ||
+      defaultTopic;
+    const feeds = feedsByTopic[topic] || [];
 
     let sinceMs = null;
     if (range === "24h") sinceMs = Date.now() - 24 * 60 * 60 * 1000;
@@ -195,6 +203,7 @@ app.get("/api/articles", async (req, res) => {
         total: sorted.length,
         range: range || null,
         q: safeString(q) || null,
+        topic,
       },
       articles: clipped,
     });
